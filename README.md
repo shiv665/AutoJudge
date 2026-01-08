@@ -65,9 +65,6 @@ Place all files in a directory called `autojudge/`
 python -m venv venv
 venv\Scripts\activate
 
-# Linux/Mac
-python -m venv venv
-source venv/bin/activate
 ```
 
 ### 3. Install Dependencies
