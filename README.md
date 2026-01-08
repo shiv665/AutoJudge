@@ -150,10 +150,10 @@ The system segments problem text into meaningful components:
 ```python
 # Example segmentation
 {
-    'problem_statement': 'Given an array of integers...',
-    'constraints': '1 ≤ n ≤ 10^5',
-    'examples': 'Input: [1,2,3] Output: 6',
-    'explanation': 'Additional clarifications...'
+    'title': 'Given an array of integers...',
+    'description': 'Calculate the sum of all elements.',
+    'input_description': 'First line contains an integer N...',
+    'output_description': 'Output the sum as a single integer.',
 }
 ```
 
