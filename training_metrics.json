@@ -1,0 +1,16 @@
+{
+  "dataset_size": 4112,
+  "train_size": 3289,
+  "test_size": 823,
+  "num_features": 1094,
+  "class_distribution": {
+    "easy": 766,
+    "hard": 1941,
+    "medium": 1405
+  },
+  "classifier_accuracy": 0.5164034021871203,
+  "classifier_type": "Random Forest",
+  "regressor_type": "gradient_boosting",
+  "mae": 1.6590552336686355,
+  "rmse": 1.9950689730829942
+}
