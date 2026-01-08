@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AutoJudge - Programming Problem Difficulty Predictor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🎯 AutoJudge</h1>
+            <p class="subtitle">Intelligent Programming Problem Difficulty Predictor</p>
+        </header>
+
+        <div class="main-content">
+            <div class="input-section">
+                <h2>Enter Problem Details</h2>
+                <form id="predictionForm">
+                    <div class="form-group">
+                        <label for="title">Problem Title (Optional)</label>
+                        <input 
+                            type="text" 
+                            id="title" 
+                            name="title" 
+                            placeholder="e.g., Two Sum Problem"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="description">Problem Description *</label>
+                        <textarea 
+                            id="description" 
+                            name="description" 
+                            rows="8" 
+                            required
+                            placeholder="Enter the main problem statement here..."
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="input_description">Input Description (Optional)</label>
+                        <textarea 
+                            id="input_description" 
+                            name="input_description" 
+                            rows="4"
+                            placeholder="Describe the input format..."
+                        ></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="output_description">Output Description (Optional)</label>
+                        <textarea 
+                            id="output_description" 
+                            name="output_description" 
+                            rows="4"
+                            placeholder="Describe the expected output format..."
+                        ></textarea>
+                    </div>
+
+                    <div class="button-group">
+                        <button type="submit" class="btn btn-primary" id="predictBtn">
+                            Predict Difficulty
+                        </button>
+                        <button type="button" class="btn btn-secondary" id="clearBtn">
+                            Clear Form
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="results-section" id="resultsSection" style="display: none;">
+                <h2>Prediction Results</h2>
+                
+                <div class="result-card">
+                    <div class="result-item">
+                        <span class="result-label">Difficulty Class:</span>
+                        <span class="result-value difficulty-badge" id="predictedClass">-</span>
+                    </div>
+                    
+                    <div class="result-item">
+                        <span class="result-label">Difficulty Score (0-10):</span>
+                        <span class="result-value score-value" id="predictedScore">-</span>
+                    </div>
+                    
+                    <div class="result-item" id="confidenceItem" style="display: none;">
+                        <span class="result-label">Confidence:</span>
+                        <span class="result-value" id="confidence">-</span>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <p><strong>Note:</strong> Predictions are based on textual analysis using machine learning models trained on competitive programming problems.</p>
+                </div>
+            </div>
+
+            <div class="error-section" id="errorSection" style="display: none;">
+                <div class="error-box">
+                    <h3>⚠️ Error</h3>
+                    <p id="errorMessage"></p>
+                </div>
+            </div>
+
+            <div class="loading-section" id="loadingSection" style="display: none;">
+                <div class="loader"></div>
+                <p>Analyzing problem difficulty...</p>
+            </div>
+        </div>
+
+        <footer>
+            <p>Built with Flask, Scikit-learn, and advanced text segmentation techniques</p>
+            <p class="tech-stack">Classification • Regression • NLP • Machine Learning</p>
+        </footer>
+    </div>
+
+    <script>
+        const form = document.getElementById('predictionForm');
+        const resultsSection = document.getElementById('resultsSection');
+        const errorSection = document.getElementById('errorSection');
+        const loadingSection = document.getElementById('loadingSection');
+        const clearBtn = document.getElementById('clearBtn');
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Hide previous results
+            resultsSection.style.display = 'none';
+            errorSection.style.display = 'none';
+            loadingSection.style.display = 'block';
+
+            // Get form data
+            const formData = {
+                title: document.getElementById('title').value,
+                description: document.getElementById('description').value,
+                input_description: document.getElementById('input_description').value,
+                output_description: document.getElementById('output_description').value
+            };
+
+            try {
+                const response = await fetch('/predict', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                loadingSection.style.display = 'none';
+
+                if (data.success) {
+                    // Display results
+                    const classElement = document.getElementById('predictedClass');
+                    classElement.textContent = data.predicted_class;
+                    classElement.className = 'result-value difficulty-badge ' + 
+                                           data.predicted_class.toLowerCase();
+
+                    document.getElementById('predictedScore').textContent = 
+                        data.predicted_score;
+
+                    if (data.confidence) {
+                        document.getElementById('confidence').textContent = 
+                            data.confidence + '%';
+                        document.getElementById('confidenceItem').style.display = 'flex';
+                    } else {
+                        document.getElementById('confidenceItem').style.display = 'none';
+                    }
+
+                    resultsSection.style.display = 'block';
+                    resultsSection.scrollIntoView({ behavior: 'smooth' });
+                } else {
+                    throw new Error(data.error || 'Unknown error occurred');
+                }
+            } catch (error) {
+                loadingSection.style.display = 'none';
+                document.getElementById('errorMessage').textContent = error.message;
+                errorSection.style.display = 'block';
+            }
+        });
+
+        clearBtn.addEventListener('click', () => {
+            form.reset();
+            resultsSection.style.display = 'none';
+            errorSection.style.display = 'none';
+        });
+    </script>
+</body>
+</html>
