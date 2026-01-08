@@ -308,9 +308,6 @@ To extend this project:
 3. Enhance segmentation in `preprocessing/segmentation.py`
 4. Improve the UI in `templates/index.html` and `static/style.css`
 
-## 📄 License
-
-This project is for educational purposes.
 
 ## 🙋 Support
 
